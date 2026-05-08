@@ -1,1 +1,38 @@
+import pandas as pd
 
+# 讀取資料
+df = pd.read_csv("training_log.csv")
+
+# 只取某個選手（先做A001測試）
+athlete_id = "A001"
+a = df[df["athlete_id"] == athlete_id]
+
+# --------- 基本負荷 ---------
+total_distance = a["distance_m"].sum()
+avg_rpe = a["rpe"].mean()
+sessions = len(a)
+
+# --------- 疲勞判斷（簡化版）---------
+load = (a["distance_m"] * a["rpe"]).sum()
+avg_load = load / sessions if sessions > 0 else 0
+
+# --------- 輸出 ---------
+print("\n🧠 ATHLETE REPORT")
+print(f"Athlete: {athlete_id}")
+print(f"Sessions: {sessions}")
+print(f"Total Distance: {total_distance} m")
+print(f"Average RPE: {avg_rpe:.2f}")
+print(f"Training Load Score: {avg_load:.2f}")
+
+# --------- 簡單教練判斷 ---------
+print("\n📊 COACH INSIGHT:")
+
+if avg_rpe > 7:
+    print("⚠️ 疲勞偏高：建議降低強度或增加恢復")
+elif avg_rpe < 4:
+    print("🟢 強度偏低：可增加刺激")
+else:
+    print("🟡 狀態穩定：維持目前訓練")
+
+if total_distance > 10000:
+    print("⚠️ 高週期負荷：注意過度訓練風險")
